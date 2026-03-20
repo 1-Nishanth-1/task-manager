@@ -17,7 +17,7 @@ let internalEmitTaskEvent:
 export const createSocketServer = (server: HttpServer) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: ["http://localhost:3000", "https://task-manger-topaz.vercel.app"],
       methods: ["GET", "POST"],
       credentials: true,
     },

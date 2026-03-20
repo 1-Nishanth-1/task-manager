@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { logger } from "../utils/logger";
+import { AppError } from "../utils/errors";
 
 export const errorHandler = (
   err: unknown,
@@ -8,6 +9,13 @@ export const errorHandler = (
   _next: NextFunction,
 ) => {
   logger.error("Unhandled error", err);
+
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+    });
+  }
 
   const message = err instanceof Error ? err.message : "Internal server error";
 

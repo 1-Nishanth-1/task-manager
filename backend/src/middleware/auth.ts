@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { sendError } from "../utils/response";
 import { env } from "../config/env";
+import { UnauthorizedError } from "../utils/errors";
 import prisma from "../prisma/client";
 import { logger } from "../utils/logger";
 
@@ -31,7 +32,7 @@ export const authMiddleware = async (
     const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
 
     if (!decoded.sub || !decoded.email) {
-      return sendError(res, "Invalid token payload", 401);
+      throw new UnauthorizedError("Invalid token payload");
     }
 
     req.user = {

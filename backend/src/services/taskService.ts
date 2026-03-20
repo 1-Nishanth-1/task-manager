@@ -2,6 +2,7 @@ import prisma from "../prisma/client";
 import type { Prisma } from "@prisma/client";
 import { logger } from "../utils/logger";
 import { emitTaskEvent } from "../sockets/index";
+import { NotFoundError, UnauthorizedError, BadRequestError } from "../utils/errors";
 
 type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
 type TaskPriority = "LOW" | "MEDIUM" | "HIGH";
@@ -77,7 +78,7 @@ export const createTask = async (input: CreateTaskInput) => {
     });
 
     if (!assignee) {
-      throw new Error("Assignee not found");
+      throw new NotFoundError("Assignee not found");
     }
 
     assignedToId = assignee.id;
@@ -167,17 +168,16 @@ export const updateTask = async (input: UpdateTaskInput) => {
   });
 
   if (!existing) {
-    throw new Error("Task not found");
+    throw new NotFoundError("Task not found");
   }
 
   const isCreator = existing.createdById === input.userId;
   const isAssignee = existing.assignedToId === input.userId;
-  const isStatusOnlyUpdate = Object.keys(input.data).every(
-    (key) => key === "status",
-  );
+  const dataKeys = Object.keys(input.data).filter(key => input.data[key as keyof typeof input.data] !== undefined);
+  const isStatusOnlyUpdate = dataKeys.length === 1 && dataKeys[0] === "status";
 
   if (!isCreator && !(isAssignee && isStatusOnlyUpdate)) {
-    throw new Error("Only the creator or assignee can update this task");
+    throw new UnauthorizedError("Only the creator or assignee can update this task");
   }
 
   const task = await prisma.task.update({
@@ -210,11 +210,11 @@ export const deleteTask = async (input: DeleteTaskInput) => {
   });
 
   if (!existing) {
-    throw new Error("Task not found");
+    throw new NotFoundError("Task not found");
   }
 
   if (existing.createdById !== input.userId) {
-    throw new Error("Only the creator can delete this task");
+    throw new UnauthorizedError("Only the creator can delete this task");
   }
 
   await prisma.task.delete({
@@ -234,11 +234,11 @@ export const assignTask = async (input: AssignTaskInput) => {
   });
 
   if (!existing) {
-    throw new Error("Task not found");
+    throw new NotFoundError("Task not found");
   }
 
   if (existing.createdById !== input.requestedById) {
-    throw new Error("Only the creator can assign this task");
+    throw new UnauthorizedError("Only the creator can assign this task");
   }
 
   const user = await prisma.user.findUnique({
@@ -246,7 +246,7 @@ export const assignTask = async (input: AssignTaskInput) => {
   });
 
   if (!user) {
-    throw new Error("Assignee not found");
+    throw new NotFoundError("Assignee not found");
   }
 
   const task = await prisma.task.update({
