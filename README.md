@@ -162,19 +162,11 @@ Adding a minimal test suite here is an obvious next step.
 
 ## 6. Working demo
 
-If you deploy the stack, you can document it here:
+  Used NGINX in AWS EC2 to serve the backend and frontend is deployed in Vercel as it is optimized fro Next.js projects
 
 - **Frontend (Vercel):** https://task-manger-topaz.vercel.app
 - **Backend API:** https://56.228.19.209.nip.io
 
-Suggested ways to demonstrate the app:
-
-- Short screen recording walking through:
-  - Google sign‑in.
-  - Creating a task.
-  - Assigning a task to another user.
-  - Seeing the update appear in another browser window in real time.
-- Or include a few screenshots in the repo under `public/` and reference them here.
 
 ---
 
