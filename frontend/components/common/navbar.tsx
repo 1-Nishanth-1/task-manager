@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -27,7 +28,6 @@ const navItems = [
 export function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { theme, setTheme } = useTheme();
   const { signOut } = useAuthActions();
   const [open, setOpen] = useState(false);
 
@@ -36,10 +36,6 @@ export function Navbar() {
     .map((n) => n[0])
     .join("")
     .toUpperCase();
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   return (
     <header className="sticky top-0 z-30 border-b border-zinc-100 bg-white/70 backdrop-blur-xl dark:border-zinc-900 dark:bg-zinc-950/60">
@@ -54,7 +50,7 @@ export function Navbar() {
           </button>
           <Link href={routes.dashboard} className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-2xl bg-zinc-900 text-xs font-semibold text-zinc-50 shadow-sm dark:bg-zinc-100 dark:text-zinc-900">
-              FT
+              <Image src="/favicon.ico" alt="Logo" width={28} height={28} />
             </div>
             <span className="hidden text-sm font-semibold tracking-tight text-zinc-900 sm:inline dark:text-zinc-50">
               FlowTasks
