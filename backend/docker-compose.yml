@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: task_manager
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      JWT_SECRET: super-secret-jwt-key-change-me
+      DATABASE_URL: postgresql://user:password@db:5432/task_manager?schema=public
+    ports:
+      - "4000:4000"
+
+volumes:
+  db-data:
