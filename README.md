@@ -8,7 +8,7 @@ You can access the site **HERE** https://task-manger-topaz.vercel.app
 This repo contains:
 
 - `backend/` – Express + Prisma + PostgreSQL API and Socket.IO server
-- `task-manger-frontend/` – Next.js 16 app (App Router) with NextAuth, React Query, and a Tailwind‑based UI
+- `frontend/` – Next.js 16 app (App Router) with NextAuth, React Query, and a Tailwind‑based UI
 
 ---
 
@@ -89,7 +89,7 @@ Then open http://localhost:3000 and sign in with Google.
 
 ### 2.1 High‑level system
 
-- **Client** – Next.js app (App Router) in `task-manger-frontend/`.
+- **Client** – Next.js app (App Router) in `frontend/`.
 - **API + Realtime** – Node/Express server with Prisma and Socket.IO in `backend/`.
 - **Database** – PostgreSQL, managed via Prisma migrations.
 - **Auth** – Google OAuth via NextAuth on the frontend, with a separate JWT for backend access.
@@ -100,11 +100,11 @@ Conceptually:
 
 ### 2.2 Frontend (Next.js)
 
-- Next.js App Router app under `task-manger-frontend/app`.
+- Next.js App Router app under `frontend/app`.
 - Authentication via `next-auth` + Google provider.
 - React Query manages data fetching, caching, and background refetching.
-- Axios client in `task-manger-frontend/lib/axios.ts` talks to the backend REST API.
-- Socket.IO client in `task-manger-frontend/lib/socket.ts` subscribes to task events (created/updated/assigned) for real‑time updates.
+- Axios client in `frontend/lib/axios.ts` talks to the backend REST API.
+- Socket.IO client in `frontend/lib/socket.ts` subscribes to task events (created/updated/assigned) for real‑time updates.
 
 ### 2.3 Backend (Express + Prisma + Socket.IO)
 
