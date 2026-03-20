@@ -5,7 +5,7 @@ Full‑stack task management app with Google login, real‑time task updates, an
 This repo contains:
 
 - `backend/` – Express + Prisma + PostgreSQL API and Socket.IO server
-- `task-manger-frontend/` – Next.js 16 app (App Router) with NextAuth, React Query, and a Tailwind‑based UI
+- `frontend/` – Next.js 16 app (App Router) with NextAuth, React Query, and a Tailwind‑based UI
 
 ---
 
@@ -28,7 +28,7 @@ cd backend
 npm install
 
 # Frontend deps
-cd ../task-manger-frontend
+cd ../frontend
 npm install
 ```
 
@@ -42,7 +42,7 @@ JWT_SECRET="<strong-random-secret>"
 PORT=4000
 ```
 
-**Frontend** ([task-manger-frontend/.env.local](task-manger-frontend/.env.local))
+**Frontend** ([frontend/.env.local](frontend/.env.local))
 
 ```dotenv
 GOOGLE_CLIENT_ID=<your-google-client-id>
@@ -72,7 +72,7 @@ docker compose up -d
 npm run prisma:migrate
 
 # 2) Start the frontend dev server
-cd ../task-manger-frontend
+cd ../frontend
 npm run dev
 ```
 
@@ -87,7 +87,7 @@ Then open http://localhost:3000 and sign in with Google.
 At a high level:
 
 - **Frontend (Next.js)**
-  - Next.js App Router app under `task-manger-frontend/app`.
+  - Next.js App Router app under `frontend/app`.
   - Authentication via `next-auth` + Google provider.
   - React Query for data fetching and caching.
   - Axios client in `lib/axios.ts` talks to the backend REST API.
@@ -105,7 +105,7 @@ At a high level:
 
 - **Authentication & authorization**
   - Frontend uses Google OAuth via NextAuth.
-  - A backend‑specific JWT is minted in `task-manger-frontend/app/api/backend-token/route.ts` and signed with `BACKEND_JWT_SECRET`.
+  - A backend‑specific JWT is minted in `frontend/app/api/backend-token/route.ts` and signed with `BACKEND_JWT_SECRET`.
   - Express `authMiddleware` verifies that JWT and attaches `req.user`.
   - Task service enforces that only creators (or, in some cases, assignees) can update/delete tasks.
 
