@@ -8,7 +8,7 @@ You can access the site **HERE** https://task-manger-topaz.vercel.app
 This repo contains:
 
 - `backend/` – Express + Prisma + PostgreSQL API and Socket.IO server
-- `frontend/` – Next.js 16 app (App Router) with NextAuth, React Query, and a Tailwind‑based UI
+- `task-manger-frontend/` – Next.js 16 app (App Router) with NextAuth, React Query, and a Tailwind‑based UI
 
 ---
 
@@ -87,30 +87,56 @@ Then open http://localhost:3000 and sign in with Google.
 
 ## 2. Architecture overview
 
-At a high level:
+### 2.1 High‑level system
 
-- **Frontend (Next.js)**
-  - Next.js App Router app under `frontend/app`.
-  - Authentication via `next-auth` + Google provider.
-  - React Query for data fetching and caching.
-  - Axios client in `lib/axios.ts` talks to the backend REST API.
-  - Socket.IO client in `lib/socket.ts` subscribes to real‑time task events.
+- **Client** – Next.js app (App Router) in `task-manger-frontend/`.
+- **API + Realtime** – Node/Express server with Prisma and Socket.IO in `backend/`.
+- **Database** – PostgreSQL, managed via Prisma migrations.
+- **Auth** – Google OAuth via NextAuth on the frontend, with a separate JWT for backend access.
 
-- **Backend (Express + Prisma)**
-  - Express server in [backend/src/app.ts](backend/src/app.ts) with CORS, Helmet, and XSS protection.
+Conceptually:
+
+`Browser (Next.js) → REST/Socket.IO → Express API → PostgreSQL`
+
+### 2.2 Frontend (Next.js)
+
+- Next.js App Router app under `task-manger-frontend/app`.
+- Authentication via `next-auth` + Google provider.
+- React Query manages data fetching, caching, and background refetching.
+- Axios client in `task-manger-frontend/lib/axios.ts` talks to the backend REST API.
+- Socket.IO client in `task-manger-frontend/lib/socket.ts` subscribes to task events (created/updated/assigned) for real‑time updates.
+
+### 2.3 Backend (Express + Prisma + Socket.IO)
+
+- Express app in [backend/src/app.ts](backend/src/app.ts) with:
+  - CORS configured for the local dev origin and the deployed Vercel domain.
+  - Security middleware: Helmet and XSS‑clean.
   - REST routes under `backend/src/routes` for tasks and auth sync.
-  - Socket.IO server in [backend/src/sockets/index.ts](backend/src/sockets/index.ts) broadcasting task updates (create/update/assign).
-  - Prisma ORM with PostgreSQL; schema is in [backend/prisma/schema.prisma](backend/prisma/schema.prisma).
+- Socket.IO server in [backend/src/sockets/index.ts](backend/src/sockets/index.ts):
+  - Authenticates connections using the backend JWT.
+  - Places each user in a dedicated room.
+  - Emits events when tasks are created, updated, or assigned.
+- Prisma ORM with schema in [backend/prisma/schema.prisma](backend/prisma/schema.prisma) and migrations under `backend/prisma/migrations/`.
 
-- **Data model**
-  - `User`: `id`, `name`, `email`, optional `image`; links to created and assigned tasks.
-  - `Task`: `title`, `description`, `status` (TODO/IN_PROGRESS/DONE), creator, optional assignee, timestamps.
+### 2.4 Domain model
 
-- **Authentication & authorization**
-  - Frontend uses Google OAuth via NextAuth.
-  - A backend‑specific JWT is minted in `frontend/app/api/backend-token/route.ts` and signed with `BACKEND_JWT_SECRET`.
-  - Express `authMiddleware` verifies that JWT and attaches `req.user`.
-  - Task service enforces that only creators (or, in some cases, assignees) can update/delete tasks.
+- **User**
+  - Fields: `id`, `name`, `email`, optional `image`, `createdAt`.
+  - Relations: `createdTasks`, `assignedTasks`.
+- **Task**
+  - Fields: `id`, `title`, `description`, `status` (TODO | IN_PROGRESS | DONE), `priority` (LOW | MEDIUM | HIGH), `createdAt`, `updatedAt`.
+  - Foreign keys: `createdById` (required), `assignedToId` (optional).
+  - Indexes on creator, assignee, status, and priority for efficient querying.
+
+### 2.5 Auth & request flow
+
+1. User signs in with Google via NextAuth on the frontend.
+2. Frontend calls `/api/backend-token`, which:
+   - Reads the NextAuth session.
+   - Issues a backend JWT signed with `BACKEND_JWT_SECRET`.
+   - Calls `backend/api/auth/sync` to upsert the user in the database.
+3. Subsequent REST and Socket.IO calls include this backend JWT; `authMiddleware` verifies it and populates `req.user`.
+4. Task operations use that user identity for authorization and for targeting real‑time notifications.
 
 ---
 
@@ -162,11 +188,10 @@ Adding a minimal test suite here is an obvious next step.
 
 ## 6. Working demo
 
-  Used NGINX in AWS EC2 to serve the backend and frontend is deployed in Vercel as it is optimized fro Next.js projects
+Backend is served behind NGINX on AWS EC2; the frontend is deployed on Vercel (optimized for Next.js).
 
 - **Frontend (Vercel):** https://task-manger-topaz.vercel.app
 - **Backend API:** https://56.228.19.209.nip.io
-
 
 ---
 
@@ -184,8 +209,9 @@ This project used **GitHub Copilot (GPT-5.1)** to accelerate development.
   - All environment variable names and values were adjusted to match the actual deployment setup.
   - CORS and Socket.IO origins were manually constrained to known frontends.
   - Prisma schema and relations were checked to ensure foreign keys aligned with the intended user/task model.
+  - Lot of changes were made to the UI to optimize it further to provide a clean and mosern llok.
 
 - **Example disagreement with AI**
-  - An early AI suggestion was to introduce a dedicated Prisma seed script with hard‑coded demo users and tasks.
-  - Instead, we chose to keep seeding manual for now (signing in with real Google accounts to create users), keeping the codebase smaller and avoiding extra operational complexity.
-  - A seed script remains on the roadmap, but only once the domain model has fully stabilized.
+  - AI suggested adding a full role-based access control system (admins, members, viewers) and a separate admin dashboard. I decided this was overkill for the current scope and kept the simpler creator/assignee permission model focused on small teams.
+  - AI proposed generating and committing a large Prisma seed file with hard-coded demo users and tasks. I preferred using real Google accounts for seeding in development to better mirror production auth and avoid maintaining fake credentials.
+  - AI initially recommended using a wildcard CORS policy (`*`) to "make local testing easier". I rejected this in favour of explicitly whitelisting localhost and the Vercel domain to keep the deployment more secure.
