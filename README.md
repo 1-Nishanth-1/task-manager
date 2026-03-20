@@ -215,3 +215,5 @@ This project used **GitHub Copilot (GPT-5.1)** to accelerate development.
   - AI suggested adding a full role-based access control system (admins, members, viewers) and a separate admin dashboard. I decided this was overkill for the current scope and kept the simpler creator/assignee permission model focused on small teams.
   - AI proposed generating and committing a large Prisma seed file with hard-coded demo users and tasks. I preferred using real Google accounts for seeding in development to better mirror production auth and avoid maintaining fake credentials.
   - AI initially recommended using a wildcard CORS policy (`*`) to "make local testing easier". I rejected this in favour of explicitly whitelisting localhost and the Vercel domain to keep the deployment more secure.
+
+p.s. As did backend and frontend in 2 seperate git repositories I lost track of the commit history. 
