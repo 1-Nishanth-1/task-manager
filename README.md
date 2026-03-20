@@ -81,7 +81,6 @@ npm run dev
 
 Then open http://localhost:3000 and sign in with Google.
 
-> **Tip:** On first login, the frontend syncs your Google profile to the backend, so a corresponding `User` row exists before you create or assign tasks.
 
 ---
 
@@ -200,7 +199,7 @@ Backend is served behind NGINX on AWS EC2; the frontend is deployed on Vercel (o
 This project used **GitHub Copilot (GPT-5.1)** to accelerate development.
 
 - **What AI was used for**
-  - Drafting Express middleware, error handling, and CORS configuration.
+  - Drafting Express middleware, error handling.
   - Sketching Prisma model definitions and basic CRUD logic for tasks.
   - Helping debug environment variable issues (NextAuth secret, CORS, backend token sync).
   - Generating this README structure and wording.
