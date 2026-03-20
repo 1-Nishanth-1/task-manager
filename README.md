@@ -2,6 +2,9 @@
 
 Full‑stack task management app with Google login, real‑time task updates, and email‑based assignment.
 
+Deployed in vercel for the frontend and AWS EC2 for the backend.
+You can access the site **HERE** https://task-manger-topaz.vercel.app
+
 This repo contains:
 
 - `backend/` – Express + Prisma + PostgreSQL API and Socket.IO server
