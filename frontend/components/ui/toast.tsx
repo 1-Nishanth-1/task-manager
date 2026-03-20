@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const toastVariants = cva(
-  "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border border-zinc-200 bg-white/90 px-4 py-3 text-sm shadow-lg backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/90",
+  "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border border-zinc-200 bg-white/90 px-4 py-3 text-sm text-white shadow-lg backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/90",
   {
     variants: {
       variant: {
@@ -38,12 +38,8 @@ export function Toast({
   return (
     <div className={cn(toastVariants({ variant }), className)} {...props}>
       <div className="space-y-1">
-        {title && <p className="text-xs font-medium">{title}</p>}
-        {description && (
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            {description}
-          </p>
-        )}
+        {title && <p className="text-xs font-medium text-white">{title}</p>}
+        {description && <p className="text-xs text-white/90">{description}</p>}
       </div>
     </div>
   );

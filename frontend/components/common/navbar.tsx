@@ -4,15 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
-import {
-  LayoutDashboard,
-  ListChecks,
-  LogOut,
-  Menu,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { LayoutDashboard, ListChecks, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Sheet } from "@/components/ui/sheet";
@@ -38,16 +30,18 @@ export function Navbar() {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-zinc-100 bg-white/70 backdrop-blur-xl dark:border-zinc-900 dark:bg-zinc-950/60">
+    <header className="sticky top-0 z-40 border-b border-zinc-100 bg-white md:bg-white/70 backdrop-blur-xl dark:border-zinc-900 dark:bg-zinc-950 md:dark:bg-zinc-950/60">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="mr-1 flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm hover:bg-zinc-50 md:hidden dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label="Open menu"
             onClick={() => setOpen(true)}
           >
             <Menu className="h-4 w-4" />
-          </button>
+          </Button>
           <Link href={routes.dashboard} className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-2xl bg-zinc-900 text-xs font-semibold text-zinc-50 shadow-sm dark:bg-zinc-100 dark:text-zinc-900">
               <Image src="/favicon.ico" alt="Logo" width={28} height={28} />
@@ -100,12 +94,40 @@ export function Navbar() {
       </div>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <div className="flex flex-1 flex-col gap-3">
-          <div className="mb-3 flex items-center justify-between">
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="mb-1 flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
               Navigation
             </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
+
+          {session?.user && (
+            <div className="flex items-center gap-2 rounded-2xl bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
+              <Avatar
+                src={session.user.image ?? undefined}
+                initials={initials || ""}
+              />
+              <div className="flex flex-col">
+                <span className="font-medium text-zinc-900 dark:text-zinc-50">
+                  {session.user.name}
+                </span>
+                {session.user.email && (
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                    {session.user.email}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-1">
             {navItems.map((item) => {
               const active = pathname.startsWith(item.href);
@@ -126,6 +148,19 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {session?.user && (
+              <Button
+                className="mt-3 justify-start rounded-2xl px-3 py-2 text-sm font-medium text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                variant="ghost"
+                onClick={() => {
+                  setOpen(false);
+                  signOut();
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </Button>
+            )}
           </div>
         </div>
       </Sheet>

@@ -43,9 +43,10 @@ export default function TasksPage() {
   }
 
   const columnStyles: Record<Task["status"], string> = {
-    TODO: "bg-zinc-100/40 border-zinc-200/50 dark:bg-zinc-900/40 dark:border-zinc-800/50",
-    IN_PROGRESS: "bg-blue-50/40 border-blue-200/50 dark:bg-blue-900/20 dark:border-blue-800/50",
-    DONE: "bg-emerald-50/40 border-emerald-200/50 dark:bg-emerald-900/20 dark:border-emerald-800/50",
+    TODO: "bg-red-100/40 border-red-200/50 dark:bg-red-900/40 dark:border-red-800/50",
+    IN_PROGRESS:
+      "bg-yellow-100/40 border-yellow-200/50 dark:bg-yellow-900/20 dark:border-yellow-800/50",
+    DONE: "bg-lime-50/40 border-lime-200/50 dark:bg-green-300/20 dark:border-green-800/50",
   };
 
   const handleDropOnColumn = async (status: Task["status"]) => {
@@ -86,8 +87,8 @@ export default function TasksPage() {
         <Button
           variant={filterAssigned ? "default" : "outline"}
           size="sm"
-          onClick={() => setFilterAssigned(prev => !prev)}
-          className="gap-2 rounded-xl text-xs"
+          onClick={() => setFilterAssigned((prev) => !prev)}
+          className="gap-2 rounded-xl text-xs text-white"
         >
           <Filter className="h-3.5 w-3.5" />
           {filterAssigned ? "Assigned to me" : "All tasks"}
@@ -97,17 +98,20 @@ export default function TasksPage() {
       {isLoading ? (
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
-             <div key={i} className="flex min-h-[500px] flex-col rounded-3xl border border-zinc-200/50 bg-zinc-100/40 p-3 dark:border-zinc-800/50 dark:bg-zinc-900/40">
-               <div className="flex items-center justify-between mb-4">
-                 <Skeleton className="h-5 w-24" />
-                 <Skeleton className="h-5 w-8 rounded-full" />
-               </div>
-               <div className="space-y-3">
-                 <Skeleton className="h-28 w-full rounded-xl" />
-                 <Skeleton className="h-24 w-full rounded-xl" />
-                 <Skeleton className="h-32 w-full rounded-xl" />
-               </div>
-             </div>
+            <div
+              key={i}
+              className="flex min-h-[500px] flex-col rounded-3xl border border-zinc-200/50 bg-zinc-100/40 p-3 dark:border-zinc-800/50 dark:bg-zinc-900/40"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-5 w-8 rounded-full" />
+              </div>
+              <div className="space-y-3">
+                <Skeleton className="h-28 w-full rounded-xl" />
+                <Skeleton className="h-24 w-full rounded-xl" />
+                <Skeleton className="h-32 w-full rounded-xl" />
+              </div>
+            </div>
           ))}
         </div>
       ) : (

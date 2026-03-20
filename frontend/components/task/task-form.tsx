@@ -7,13 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/textarea";
-import type { TaskStatus, TaskPriority, Task } from "@/features/tasks/types";
+import type { TaskStatus, Task } from "@/features/tasks/types";
 
 const taskFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   status: z.enum(["TODO", "IN_PROGRESS", "DONE"] satisfies TaskStatus[]),
-  priority: z.enum(["LOW", "MEDIUM", "HIGH"] satisfies TaskPriority[]).optional(),
   assigneeEmail: z
     .string()
     .trim()
@@ -45,7 +44,6 @@ export function TaskForm({
     title: initialTask?.title ?? "",
     description: initialTask?.description ?? "",
     status: initialTask?.status ?? "TODO",
-    priority: initialTask?.priority ?? "MEDIUM",
     assigneeEmail: "",
   }));
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +54,6 @@ export function TaskForm({
         title: initialTask.title,
         description: initialTask.description ?? "",
         status: initialTask.status,
-        priority: initialTask.priority,
         assigneeEmail: "",
       });
       setError(null);
@@ -85,7 +82,6 @@ export function TaskForm({
         title: "",
         description: "",
         status: "TODO",
-        priority: "MEDIUM",
         assigneeEmail: "",
       });
     }
@@ -123,37 +119,20 @@ export function TaskForm({
             onChange={(e) => handleChange("description", e.target.value)}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="task-status">Status</Label>
-            <select
-              id="task-status"
-              className="flex h-10 w-full rounded-2xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus-visible:ring-zinc-100"
-              value={values.status}
-              onChange={(e) =>
-                handleChange("status", e.target.value as TaskStatus)
-              }
-            >
-              <option value="TODO">Todo</option>
-              <option value="IN_PROGRESS">In progress</option>
-              <option value="DONE">Done</option>
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="task-priority">Priority</Label>
-            <select
-              id="task-priority"
-              className="flex h-10 w-full rounded-2xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus-visible:ring-zinc-100"
-              value={values.priority}
-              onChange={(e) =>
-                handleChange("priority", e.target.value as TaskPriority)
-              }
-            >
-              <option value="LOW">Low</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HIGH">High</option>
-            </select>
-          </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="task-status">Status</Label>
+          <select
+            id="task-status"
+            className="flex h-10 w-full rounded-2xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus-visible:ring-zinc-100"
+            value={values.status}
+            onChange={(e) =>
+              handleChange("status", e.target.value as TaskStatus)
+            }
+          >
+            <option value="TODO">Todo</option>
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="DONE">Done</option>
+          </select>
         </div>
         {mode === "create" && (
           <div className="space-y-1.5">

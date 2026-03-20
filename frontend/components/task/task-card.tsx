@@ -106,13 +106,6 @@ export function TaskCard({
               </p>
             )}
           </div>
-          <button
-            type="button"
-            className="rounded-full p-1 text-zinc-400 opacity-0 transition-opacity hover:bg-zinc-100 hover:text-zinc-700 group-hover:opacity-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
-            aria-label="Task actions"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2 text-[11px] text-zinc-500 dark:text-zinc-400">
@@ -130,9 +123,29 @@ export function TaskCard({
             <span>Created by {task.createdBy}</span>
             {task.assignedTo && <span>Assigned to {task.assignedTo}</span>}
           </div>
-          <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
-            Updated {formatDate(task.updatedAt)}
-          </p>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-400 dark:text-zinc-500">
+            <p>Updated {formatDate(task.updatedAt)}</p>
+            {!compact && (
+              <div className="flex gap-1">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Edit task"
+                  onClick={onEdit}
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Delete task"
+                  onClick={onDelete}
+                >
+                  <Trash2 className="h-3.5 w-3.5 text-red-500" />
+                </Button>
+              </div>
+            )}
+          </div>
         </CardContent>
         <CardFooter>
           <div className="flex gap-1">
@@ -161,26 +174,6 @@ export function TaskCard({
               </Button>
             )}
           </div>
-          {!compact && (
-            <div className="flex gap-1">
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Edit task"
-                onClick={onEdit}
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Delete task"
-                onClick={onDelete}
-              >
-                <Trash2 className="h-3.5 w-3.5 text-red-500" />
-              </Button>
-            </div>
-          )}
         </CardFooter>
       </Card>
     </motion.div>
