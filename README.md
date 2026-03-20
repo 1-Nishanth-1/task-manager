@@ -21,7 +21,7 @@ This repo contains:
 
 ```bash
 # Clone
-git clone <your-repo-url>
+git clone https://github.com/1-Nishanth-1/task-manager.git
 
 # Backend deps
 cd backend
