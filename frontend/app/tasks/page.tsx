@@ -88,7 +88,11 @@ export default function TasksPage() {
           variant={filterAssigned ? "default" : "outline"}
           size="sm"
           onClick={() => setFilterAssigned((prev) => !prev)}
-          className="gap-2 rounded-xl text-xs text-white"
+          className={`gap-2 rounded-xl text-xs ${
+            filterAssigned
+              ? "text-zinc-50 dark:text-zinc-900"
+              : "text-zinc-400 dark:text-zinc-300"
+          }`}
         >
           <Filter className="h-3.5 w-3.5" />
           {filterAssigned ? "Assigned to me" : "All tasks"}

@@ -38,8 +38,16 @@ export function Toast({
   return (
     <div className={cn(toastVariants({ variant }), className)} {...props}>
       <div className="space-y-1">
-        {title && <p className="text-xs font-medium text-white">{title}</p>}
-        {description && <p className="text-xs text-white/90">{description}</p>}
+        {title && (
+          <p className="text-xs font-medium text-zinc-900 dark:text-zinc-300">
+            {title}
+          </p>
+        )}
+        {description && (
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            {description}
+          </p>
+        )}
       </div>
     </div>
   );
