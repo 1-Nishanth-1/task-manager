@@ -42,7 +42,12 @@ export function AppProviders({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem={false}
+      forcedTheme="dark"
+    >
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
           <ToastProvider>
